@@ -5,10 +5,17 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import https from 'https';
+import fs from 'fs';
 
 // Core
 import config from './config.mjs';
-import routes from './controllers/routes.mjs';
+import AuthRoutes from './routes/auth.mjs'; // ✅ Corrigé : route sous forme de fonction
+import routes from './routes/routes.mjs';
+
+dotenv.config();
 
 const Server = class Server {
   constructor() {
@@ -40,7 +47,6 @@ const Server = class Server {
           console.log('[ERROR] api dbConnect() -> mongodb error');
           this.connect = this.dbConnect(host);
         }, 5000);
-
         console.error(`[ERROR] api dbConnect() -> ${err}`);
       });
 
@@ -69,9 +75,14 @@ const Server = class Server {
   }
 
   routes() {
+    // ✅ Auth routes AVEC connexion active
+    this.app.use(AuthRoutes(this.connect));
+
+    // 📁 Routes métiers
     new routes.Albums(this.app, this.connect);
     new routes.Photos(this.app, this.connect);
 
+    // ❌ 404
     this.app.use((req, res) => {
       res.status(404).json({
         code: 404,
@@ -83,6 +94,13 @@ const Server = class Server {
   security() {
     this.app.use(helmet());
     this.app.disable('x-powered-by');
+
+    const limiter = rateLimit({
+      windowMs: 60 * 60 * 1000,
+      max: 100,
+      message: 'Trop de requêtes. Réessaie plus tard.'
+    });
+    this.app.use(limiter);
   }
 
   async run() {
@@ -91,7 +109,15 @@ const Server = class Server {
       this.security();
       this.middleware();
       this.routes();
-      this.app.listen(this.config.port);
+
+      const sslOptions = {
+        key: fs.readFileSync('./cert/key.pem'),
+        cert: fs.readFileSync('./cert/cert.pem')
+      };
+
+      https.createServer(sslOptions, this.app).listen(this.config.port, () => {
+        console.log(`✅ Serveur HTTPS lancé : https://localhost:${this.config.port}`);
+      });
     } catch (err) {
       console.error(`[ERROR] Server -> ${err}`);
     }

@@ -1,6 +1,8 @@
 // controllers/photos.mjs
 import PhotoSchema from '../models/photo.mjs';
 import AlbumSchema from '../models/album.mjs';
+import authenticateToken from '../middleware/auth.mjs';
+import { validatePhoto } from '../middleware/validators.mjs';
 
 const Photos = class Photos {
   constructor(app, connect) {
@@ -41,7 +43,7 @@ const Photos = class Photos {
   }
 
   create() {
-    this.app.post('/album/:idalbum/photo', async (req, res) => {
+    this.app.post('/album/:idalbum/photo', authenticateToken, validatePhoto, async (req, res) => {
       try {
         const albumExists = await this.AlbumModel.findById(req.params.idalbum);
         if (!albumExists) {
@@ -68,7 +70,7 @@ const Photos = class Photos {
   }
 
   updateById() {
-    this.app.put('/album/:idalbum/photo/:idphotos', async (req, res) => {
+    this.app.put('/album/:idalbum/photo/:idphotos', authenticateToken, validatePhoto, async (req, res) => {
       try {
         const existingPhoto = await this.PhotoModel.findOne({
           _id: req.params.idphotos,
@@ -94,7 +96,7 @@ const Photos = class Photos {
   }
 
   deleteById() {
-    this.app.delete('/album/:idalbum/photo/:idphotos', async (req, res) => {
+    this.app.delete('/album/:idalbum/photo/:idphotos', authenticateToken, async (req, res) => {
       try {
         const deletedPhoto = await this.PhotoModel.findByIdAndDelete(req.params.idphotos);
         if (!deletedPhoto) {

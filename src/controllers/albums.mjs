@@ -1,4 +1,6 @@
 import AlbumSchema from '../models/album.mjs';
+import authenticateToken from '../middleware/auth.mjs';
+import { validateAlbum } from '../middleware/validators.mjs';
 
 const Albums = class Albums {
   constructor(app, connect) {
@@ -8,7 +10,7 @@ const Albums = class Albums {
   }
 
   deleteById() {
-    this.app.delete('/album/:id', (req, res) => {
+    this.app.delete('/album/:id', authenticateToken, (req, res) => {
       try {
         this.AlbumModel.findByIdAndDelete(req.params.id).then((album) => {
           res.status(200).json(album || {});
@@ -79,7 +81,7 @@ const Albums = class Albums {
   }
 
   updateById() {
-    this.app.put('/album/:id', async (req, res) => {
+    this.app.put('/album/:id', authenticateToken, validateAlbum, async (req, res) => {
       try {
         const updatedAlbum = await this.AlbumModel.findByIdAndUpdate(
           req.params.id,
@@ -105,7 +107,7 @@ const Albums = class Albums {
   }
 
   create() {
-    this.app.post('/album/', (req, res) => {
+    this.app.post('/album/', authenticateToken, validateAlbum, (req, res) => {
       try {
         const albumModel = new this.AlbumModel(req.body);
         albumModel.save().then((album) => {
