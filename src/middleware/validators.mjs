@@ -3,10 +3,10 @@ import { body, validationResult } from 'express-validator';
 export const validateLogin = [
   body('username')
     .notEmpty()
-    .withMessage('Le nom d’utilisateur est requis'),
+    .withMessage('Need username'),
   body('password')
     .notEmpty()
-    .withMessage('Le mot de passe est requis'),
+    .withMessage('Need password'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -19,14 +19,14 @@ export const validateLogin = [
 export const validateRegister = [
   body('username')
     .isLength({ min: 3 })
-    .withMessage('Nom d’utilisateur trop court')
+    .withMessage('username too short')
     .notEmpty()
-    .withMessage('Nom d’utilisateur requis'),
+    .withMessage('Need username'),
   body('password')
     .isLength({ min: 6 })
-    .withMessage('Mot de passe trop court')
+    .withMessage('Password too short')
     .notEmpty()
-    .withMessage('Mot de passe requis'),
+    .withMessage('Need password'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -39,13 +39,13 @@ export const validateRegister = [
 export const validateAlbum = [
   body('title')
     .notEmpty()
-    .withMessage('Le titre est requis')
+    .withMessage('Need title')
     .isLength({ min: 2 })
-    .withMessage('Titre trop court'),
+    .withMessage('Title too short'),
   body('description')
     .optional()
     .isLength({ max: 500 })
-    .withMessage('Description trop longue'),
+    .withMessage('Description too long'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -58,18 +58,18 @@ export const validateAlbum = [
 export const validatePhoto = [
   body('title')
     .notEmpty()
-    .withMessage('Le titre est requis')
+    .withMessage('Need title')
     .isLength({ min: 2 })
-    .withMessage('Titre trop court'),
+    .withMessage('Title too short'),
   body('url')
     .notEmpty()
-    .withMessage('L’URL est requise')
+    .withMessage('Need url')
     .isURL()
-    .withMessage('L’URL n’est pas valide'),
+    .withMessage('Wrong url'),
   body('description')
     .optional()
     .isLength({ max: 500 })
-    .withMessage('Description trop longue'),
+    .withMessage('Description too long'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

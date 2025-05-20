@@ -1,82 +1,37 @@
-# API Users
+# 📸 Album Photo API – Node.js + Express + MongoDB
 
-## Overview
-The API allows users to retrieve all of the users of the application in micro service through a REST architecture. This API will be mainly used for registed Accounts.
+Cette API permet de gérer des albums et les photos associées. Chaque album peut contenir plusieurs photos, et chaque photo est liée à un seul album.
 
-It will also create own users to recover data to the platform but is in no way related to the users collected via the crawling of profiles on Social Networks.
+---
 
-### [POST] Create user
-Allows the creation of a single user.
+## 📦 Technologies utilisées
 
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- Postman pour les tests API
 
-* HTTP request : POST → user/create
+---
 
-#### Parameters :
-```javascript
-{
-  'firstname': String, // Optional
-  'lastname': Number, // Optional
-  'age': Number, // Optional
-  'city': String // Optional
-}
-```
+## 🗂️ Structure du projet
 
-#### Response :
-```javascript
-  {
-    id: Object_ID,
-    firstname: String,
-    lastname: String,
-    age: Number,
-    city: String
-  }
-```
+/src
+├── models/
+│ ├── album.mjs # Schéma Album (Mongoose)
+│ └── photo.mjs # Schéma Photo (Mongoose)
+├── controllers/
+│ ├── albums.mjs # Routes CRUD pour les albums
+│ └── photos.mjs # Routes CRUD pour les photos
+├── config.mjs # Configuration de la base MongoDB
+├── server.mjs # Configuration du serveur Express
+└── index.mjs # Point d'entrée principal
 
-### [POST] Show user
-Show an user by id.
+---
 
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
+## 🚀 Lancer le projet en local
 
-* HTTP request : GET → user/show/:id
+npm run dev
 
-#### Parameters :
-```javascript
-{
-  id: String // Required
-}
-```
+## Requetes
 
-#### Response :
-```javascript
-  {
-    id: Object_ID,
-    firstname: String,
-    lastname: String,
-    age: Number,
-    city: String
-  }
-```
-
-### Requirements
-* node 18
-* npm or yarn or pnpm
-* git
-* mongodb (please configure config.js for link mongodb)
-
-### Install
-```npm i```
-
-### Production mode
-```npm run prod```
-
-### Dev mode
-```npm run dev```
+Disponible dans : TP API MONGO.postman_collection.json

@@ -1,4 +1,3 @@
-// Dependencies
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
@@ -10,9 +9,8 @@ import rateLimit from 'express-rate-limit';
 import https from 'https';
 import fs from 'fs';
 
-// Core
 import config from './config.mjs';
-import AuthRoutes from './routes/auth.mjs'; // ✅ Corrigé : route sous forme de fonction
+import AuthRoutes from './routes/auth.mjs';
 import routes from './routes/routes.mjs';
 
 dotenv.config();
@@ -75,14 +73,11 @@ const Server = class Server {
   }
 
   routes() {
-    // ✅ Auth routes AVEC connexion active
     this.app.use(AuthRoutes(this.connect));
 
-    // 📁 Routes métiers
     new routes.Albums(this.app, this.connect);
     new routes.Photos(this.app, this.connect);
 
-    // ❌ 404
     this.app.use((req, res) => {
       res.status(404).json({
         code: 404,
@@ -116,7 +111,7 @@ const Server = class Server {
       };
 
       https.createServer(sslOptions, this.app).listen(this.config.port, () => {
-        console.log(`✅ Serveur HTTPS lancé : https://localhost:${this.config.port}`);
+        console.log(`HTTPS server launched : https://localhost:${this.config.port}`);
       });
     } catch (err) {
       console.error(`[ERROR] Server -> ${err}`);
